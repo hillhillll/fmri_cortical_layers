@@ -1,6 +1,6 @@
 import glob
 import subprocess
-import Bash_cmd
+import bash_cmd
 import os
 
 
@@ -18,7 +18,7 @@ class Prep_Fsl:
                 func
             )
             standard2example = r"{0}/reg/standard2example_func.mat".format(func)
-            cmd = Bash_cmd.bash_get(
+            cmd = bash_cmd.bash_get(
                 '-lc "flirt -in /usr/local/fsl/data/standard/MNI152_T1_2mm_brain -ref {0} -applyxfm -init {1} -out {2}"'.format(
                     filtered_func, standard2example, output_filtered_func
                 )

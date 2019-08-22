@@ -98,7 +98,7 @@ class FSL_Pipe:
         bold_create.run()
 
     def prep_bold_spm(self, path: str = None):
-        """
+        """                                     ***unused***
         MATLAB-based preproccessing pipeline based on spm batch script
         :param path: a string containing the path to the mother directory of all files
         :return: swr (smoothed, warped, realigned) nifti files for each scan + preproccessing derviatives
