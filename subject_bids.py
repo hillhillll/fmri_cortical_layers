@@ -63,8 +63,10 @@ class RunBids:
             toplvl = self.toplvl
         flag = glob.glob(r"{0}/derivatives/feats/{1}/*".format(toplvl, sub))
         if flag:
+            print("Directory given is already BIDS-appropriate")
             return False
         else:
+            print("Arranging directory in BIDS-style")
             return True
 
     # Create nifti directory

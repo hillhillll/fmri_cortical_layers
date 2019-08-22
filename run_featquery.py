@@ -29,15 +29,21 @@ class Featquery:
                 output = "{0}/tsplots/{1}/{2}".format(
                     os.path.dirname(path), subnum, prot
                 )
-                cmd = bash_get(
-                    '-lc "featquery 1 {0} 1 stats/cope1 {1} -p -s -b {2}"'.format(
-                        feat, prot, mask
-                    )
-                )
-                subprocess.run(cmd)
                 if os.path.isdir(output):
-                    os.remove(output)
-                os.rename("{0}/{1}".format(feat, prot), output)
+                    print(
+                        "{0} already went through featquery ROI analysis".format(subnum)
+                    )
+                else:
+                    print("Analyzing {0} using featquery".format(subnum))
+                    cmd = bash_get(
+                        '-lc "featquery 1 {0} 1 stats/cope1 {1} -p -s -b {2}"'.format(
+                            feat, prot, mask
+                        )
+                    )
+                    subprocess.run(cmd)
+                    if os.path.isdir(output):
+                        os.remove(output)
+                    os.rename("{0}/{1}".format(feat, prot), output)
 
     def run(self):
         self.query(path=self.path, subjects=self.subjects)

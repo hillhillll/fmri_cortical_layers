@@ -3,59 +3,55 @@ import glob
 import subprocess
 from bash_cmd import bash_get
 
-###
+PATH = os.path.abspath("C:/Users/Owner/Desktop/Cortical_Layers_fMRI")
+DEFAULT_MOTOR = {"x": 47, "y": 27, "z": 35}
+DEFAULT_SENSORY = {"x": 45, "y": 25, "z": 36}
+COORDINATES = {"motor": DEFAULT_MOTOR, "sensory": DEFAULT_SENSORY}
 
 
 class CreateROI:
-    def __init__(
-        self,
-        path: str = r"C:/Users/Owner/Desktop/Cortical_Layers_fMRI",
-        mx: int = 47,
-        my: int = 27,
-        mz: int = 35,
-        sx: int = 45,
-        sy: int = 25,
-        sz: int = 36,
-    ):
-        self.path = r"{0}/derivatives/feats".format(path)
-        self.mx = str(mx)
-        self.my = str(my)
-        self.mz = str(mz)
-        self.sx = str(sx)
-        self.sy = str(sy)
-        self.sz = str(sz)
+    def __init__(self, coordinates: dict = COORDINATES, path: str = PATH):
+        self.path = "{0}/derivatives/feats".format(path)
+        self.coordinates = coordinates
 
-    def run_create_roi(
-        self, path: str, mx: str, my: str, mz: str, sx: str, sy: str, sz: str
-    ):
-        # path = r'C:/Users/Owner/Desktop/Cortical_Layers_fMRI/derivatives/feats'
-        ###Define ROI
-        func_files = glob.glob(r"{0}/*/*.feat/filtered_func_data.nii.gz".format(path))
-        for func_data in func_files:
-            if "Motor" in func_data:
-                x = mx
-                y = my
-                z = mz
-                out_point = "{0}/Motor_ROI_point".format(os.path.dirname(func_data))
-                out_sphere = "{0}/Motor_ROI_sphere".format(os.path.dirname(func_data))
-            elif "Sensory" in func_data:
-                x = sx
-                y = sy
-                z = sz
-                out_point = "{0}/Sensory_ROI_point".format(os.path.dirname(func_data))
-                out_sphere = "{0}/Sensory_ROI_sphere".format(os.path.dirname(func_data))
-            if os.path.isfile('{0}.nii.gz'.format(out_sphere)):
-                print('Already created ROI for {0}'.format(os.path.dirname(func_data).split(os.sep)[-1][:-5]))
+    def get_coordinates(self, file_path: str):
+        if "Motor" in file_path:
+            return self.coordinates["motor"]
+        return self.coordinates["sensory"]
+
+    def get_nifti_paths(self):
+        return glob.glob(f"{self.path}/*/*.feat/filtered_func_data.nii.gz")
+
+    def run(self):
+        func_files = self.get_nifti_paths()
+        for file_path in func_files:
+            if "Motor" in file_path:
+                out_point = "{0}/Motor_ROI_point".format(os.path.dirname(file_path))
+                out_sphere = "{0}/Motor_ROI_sphere".format(os.path.dirname(file_path))
+            elif "Sensory" in file_path:
+                out_point = "{0}/Sensory_ROI_point".format(os.path.dirname(file_path))
+                out_sphere = "{0}/Sensory_ROI_sphere".format(os.path.dirname(file_path))
+            if os.path.isfile("{0}.nii.gz".format(out_sphere)):
+                print(
+                    "Already created ROI for {0}".format(
+                        os.path.dirname(file_path).split(os.sep)[-1][:-5]
+                    )
+                )
             else:
-                print('Creating ROI for {0}'.format(os.path.dirname(func_data).split(os.sep)[-1][:-5]))
+                print(
+                    "Creating ROI for {0}".format(
+                        os.path.dirname(file_path).split(os.sep)[-1][:-5]
+                    )
+                )
                 sphere_size = "8"
-                if os.path.isfile("{0}.nii.gz".format(out_point)) == True:
+                if os.path.isfile("{0}.nii.gz".format(out_point)):
                     os.remove("{0}.nii.gz".format(out_point))
-                if "IREPI" in func_data:
-                    z = str(float(z) - 21)
+                coords = self.get_coordinates(file_path)
+                if "IREPI" in file_path:
+                    coords["z"] = str(float(coords["z"]) - 21)
                 cmd = bash_get(
                     '-lc "fslmaths {0} -mul 0 -add 1 -roi {1} 1 {2} 1 {3} 1 0 1 {4} -odt float"'.format(
-                        func_data, x, y, z, out_point
+                        file_path, coords["x"], coords["y"], coords["z"], out_point
                     )
                 )
                 subprocess.run(cmd)
@@ -81,14 +77,3 @@ class CreateROI:
                     '-lc "fslmaths {0}.nii.gz -bin {0}_bin.nii.gz"'.format(out_sphere)
                 )
                 subprocess.run(cmd)
-
-    def run(self):
-        self.run_create_roi(
-            path=self.path,
-            mx=self.mx,
-            my=self.my,
-            mz=self.mz,
-            sx=self.sx,
-            sy=self.sy,
-            sz=self.sz,
-        )
