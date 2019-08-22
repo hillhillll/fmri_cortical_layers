@@ -18,7 +18,7 @@ class run_all_fsfs:
         for fsf in all_fsfs:
             cur_hdr = fsf.split(os.sep)[-1][:-4]
             cur_hdr = cur_hdr.replace("design_", "")
-            print(cur_hdr)
+            print('Analyzed {0}'.format(cur_hdr))
             sub = cur_hdr.split("_")[0]
             cur_feat = "{0}/{1}/{2}.feat".format(feat_dir, sub, cur_hdr)
             flag = "{0}/stats/smoothness".format(cur_feat)
