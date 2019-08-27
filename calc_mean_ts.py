@@ -33,28 +33,31 @@ class CalcMeanTS:
                 s34 = s34[0:83]
                 s34 = s34.reset_index(drop=True)
                 s = pd.concat([s12, s34], axis=1)
-                headers = list(s.columns.values)
-                x = s.values
-                min_max_scaler = preprocessing.MinMaxScaler()
-                x_scaled = min_max_scaler.fit_transform(x)
-                x = pd.DataFrame(x_scaled)
-            elif "IREPITI" in f:
-                if "sub-01" in ts.keys() and "sub-04" in ts.keys():
-                    s12 = pd.concat([ts["sub-01"], ts["sub-04"]], axis=1)
-                    s34 = pd.concat([ts["sub-02"], ts["sub-03"]], axis=1)
-                elif "sub-01" not in ts.keys() and "sub-04" in ts.keys():
-                    s12 = ts["sub-04"]
-                    s34 = ts["sub-03"]
-                s12 = s12[3:45]
-                s12 = s12.reset_index(drop=True)
-                s34 = s34[0:42]
-                s34 = s34.reset_index(drop=True)
-                s = pd.concat([s12, s34], axis=1)
-                headers = list(s.columns.values)
-                x = s.values
-                min_max_scaler = preprocessing.MinMaxScaler()
-                x_scaled = min_max_scaler.fit_transform(x)
-                x = pd.DataFrame(x_scaled)
+            elif "IREPITI" in f and "SE" not in f:
+                if "sub-01" in ts.keys() or "sub-04" in ts.keys():
+                    if "sub-01" in ts.keys() and "sub-04" in ts.keys():
+                        s12 = pd.concat([ts["sub-01"], ts["sub-04"]], axis=1)
+                        s34 = pd.concat([ts["sub-02"], ts["sub-03"]], axis=1)
+                    elif "sub-01" not in ts.keys() and "sub-04" in ts.keys():
+                        s12 = ts["sub-04"]
+                        s34 = ts["sub-03"]
+                    s12 = s12[3:45]
+                    s12 = s12.reset_index(drop=True)
+                    s34 = s34[0:42]
+                    s34 = s34.reset_index(drop=True)
+                    s = pd.concat([s12, s34], axis=1)
+                    s_rest = ts.iloc[:, 4:][2:43]
+                    s_rest = s_rest.reset_index(drop=True)
+                    s = pd.concat([s, s_rest], axis=1)
+                else:
+                    s = ts[2:43].reset_index(drop=True)
+            elif "SE" in f:
+                s = ts[1:46].reset_index(drop=True)
+            headers = list(s.columns.values)
+            x = s.values
+            min_max_scaler = preprocessing.MinMaxScaler()
+            x_scaled = min_max_scaler.fit_transform(x)
+            x = pd.DataFrame(x_scaled)
             x_mean = x.mean(axis=1)
             h = f.split("_")[-4]
             s.mean(axis=1).to_csv(

@@ -8,8 +8,13 @@ class Get_TS:
         self.path = r"{0}/derivatives/tsplots".format(path)
         self.subjects = glob.glob("{0}/sub*".format(self.path))
         self.tsplots = glob.glob("{0}/*/*bold".format(self.path))
+    def clear_previous_ts(self):
+        files = glob.glob(r"{0}/mean_ts/*/*.txt".format(self.path))
+        for f in files:
+            os.remove(f)
 
     def gather(self, path: str, subjects: list, tsplots: list):
+        self.clear_previous_ts()
         prots = []
         for tsplot in tsplots:
             prots.append(tsplot.split(os.sep)[-1])
@@ -19,8 +24,10 @@ class Get_TS:
                 os.makedirs("{0}/mean_ts/{1}".format(path, prot))
         for prot in prots:
             header = list()
+            print(prot)
             for subj in subjects:
                 subject = subj.split(os.sep)[-1]
+                print(subject)
                 if os.path.isdir("{0}/{1}".format(subj, prot)):
                     infile = pd.read_csv(
                         "{0}/{1}/tsplot/tsplotc_zstat1.txt".format(subj, prot),
@@ -45,7 +52,7 @@ class Get_TS:
                         header=header,
                         mode="w",
                         index=False,
-                        line_terminator=os.linesep,
+                        line_terminator=os.linesep
                     )
 
     def run(self):

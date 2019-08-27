@@ -13,9 +13,10 @@ import fix_flip_run_bet_anatomical
 import run_spm_preproc
 import fsl_standarize
 
+
 CRF_FILE = os.path.abspath("C:/Users/Owner/Desktop/CRF.xlsx")
 PATH = os.path.abspath("C:/Users/Owner/Desktop/Cortical_Layers_fMRI")
-DEFAULT_MOTOR = {"x": 47, "y": 27, "z": 35}
+DEFAULT_MOTOR = {"x": 44, "y": 27, "z": 35}
 DEFAULY_SENSORY = {"x": 45, "y": 25, "z": 36}
 COORDINATES = {"motor": DEFAULT_MOTOR, "sensory": DEFAULY_SENSORY}
 
@@ -29,7 +30,8 @@ class FslPipeline:
         coordinates: dict = COORDINATES,
     ):
         self.n_subjects = n_subjects
-        self.df = pd.read_excel(crf_file, header=0)
+        self.crf_file = crf_file
+        self.df = pd.read_excel(self.crf_file, header=0)
         self.path = path
         self.coordinates = coordinates
 

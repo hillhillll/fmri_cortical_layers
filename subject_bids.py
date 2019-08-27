@@ -47,12 +47,12 @@ class RunBids:
         if not os.path.isdir(derivatives):
             os.makedirs(derivatives)
         dcmdir = r"{0}\sourcedata\sub-{1}".format(toplvl, subnum)
-        ds_description = "C:/Users/Owner/Desktop/FSL_pipeline/bids-starter-kit-master/templates/dataset_description.json"  ##Please make sure there is a template dataset description available. this is the path to it.
+        ds_description = r"C:\Users\Owner\Desktop\FSL_pipeline\bids-starter-kit-master\templates\dataset_description.json"  ##Please make sure there is a template dataset description available. this is the path to it.
         participants_tsv = "{0}/participants.tsv".format(
-            os.path.dirname(new_toplvl)
+            self.toplvl
         )  # .tsv file containing participans data
         dcm2niidir = (
-            "C:/Users/Owner/Desktop/FSL_pipeline/mricrogl_windows/mricrogl/"
+            r"C:\Users\Owner\Desktop\Utilitis\mricrogl_windows\mricrogl"
         )  # Path to the folder containing dcm2niix (!!)
         return [dcmdir, ds_description, participants_tsv, dcm2niidir, sub, new_toplvl]
 
@@ -76,23 +76,22 @@ class RunBids:
     # niidir='{0}/Nifti'.format(new_toplvl)
 
     ###Create dataset_description.json
-    def dataset_description(self, new_toplvl: str, ds_description: str):
+    def dataset_description(self, ds_description: str):
         Proj_Name = (
             '"Cortical_Layers_fMRI"'
         )  # Define project name as it will be in the .json file
         replacements = {"proj_name": Proj_Name}
-        if os.path.isfile(
-            "{0}/dataset_description.json".format(os.path.dirname(new_toplvl))
-        ):
-            with open(ds_description) as infile:
-                with open(
-                    "{0}/dataset_description.json".format(os.path.dirname(new_toplvl)),
-                    "w",
-                ) as outfile:
-                    for line in infile:
-                        for src, target in replacements.items():
-                            line = line.replace(src, target)
-                        outfile.write(line)
+        #        if os.path.isfile(
+        #            "{0}/dataset_description.json".format(os.path.dirname(new_toplvl))
+        #        ):
+        with open(ds_description) as infile:
+            with open(
+                "{0}/dataset_description.json".format(self.toplvl), "w"
+            ) as outfile:
+                for line in infile:
+                    for src, target in replacements.items():
+                        line = line.replace(src, target)
+                    outfile.write(line)
         print("Created dataset_description.json")
 
     ###Create participants.tsv
@@ -130,7 +129,7 @@ class RunBids:
         anat_dir = glob.glob(
             "{0}/*MPRAGE*".format(dcmdir)
         )  ##find all relevent anatomical scans
-        cmd = "{0}dcm2niix -o {1} -f {2}_%f_%p {3}".format(
+        cmd = "{0}/dcm2niix -o {1} -f {2}_%f_%p {3}".format(
             dcm2niidir, r"{0}\anat".format(new_toplvl), subnum, anat_dir[0]
         )  # declare the bash command
         cmd = cmd.replace("/", os.sep)
@@ -165,7 +164,7 @@ class RunBids:
                 if "SBRef" in file:
                     func_files.remove(file)
         for file in func_files:
-            cmd = "{0}dcm2niix -o {1} -f {2}_%f_%p {3}".format(
+            cmd = "{0}/dcm2niix -o {1} -f {2}_%f_%p {3}".format(
                 dcm2niidir, r"{0}\func".format(new_toplvl), subnum, file
             )  # declare the bash command
             cmd = cmd.replace("/", os.sep)
@@ -174,7 +173,7 @@ class RunBids:
         ###Rename nii func files
         ##Renaming all func nii according to BIDS guidelines, ***please edit in order to match the template of your original dicom files***
 
-    def rename_func_file(self, new_toplvl: str, subnum: str, dcmdir: str):
+    def rename_func_file(self, new_toplvl: str, dcmdir: str):
         func_files = glob.glob(
             "{0}/func/*[Gre|IR|SE]*[Motor|Sensor|Sensory].*[!v]".format(new_toplvl)
         )
@@ -193,15 +192,15 @@ class RunBids:
             if "IR" in file:
                 scan_type = func_data[2].replace("-", "")
                 new_func = "sub-{0}_task-{1}_acq-{2}{3}_bold".format(
-                    subnum, func_type[0], scan_type, func_data[-2]
+                    self.subnum, func_type[0], scan_type, func_data[-2]
                 )
                 func_type[0] = new_func
                 shutil.move(
                     file, "{0}/func/{1}".format(new_toplvl, ".".join(func_type))
                 )
-            if "Gre" in file:
+            if "Gre" in file or "SE" in file:
                 new_func = "sub-{0}_task-{1}_acq-{2}_bold".format(
-                    subnum, func_type[0], func_data[2]
+                    self.subnum, func_type[0], func_data[2]
                 )
                 func_type[0] = new_func
                 shutil.move(
@@ -278,18 +277,16 @@ class RunBids:
             new_toplvl,
         ] = self.set_directories(self.subnum, toplvl=self.toplvl)
         flag = self.check_existence(sub=sub, toplvl=self.toplvl)
+        self.dataset_description(ds_description=ds_description)
+        self.participants(
+            sub=sub,
+            age=self.age,
+            hand=self.hand,
+            sex=self.sex,
+            participant_tsv=participants_tsv,
+            temp_participants=self.temp_participants,
+        )
         if flag:
-            self.dataset_description(
-                new_toplvl=new_toplvl, ds_description=ds_description
-            )
-            self.participants(
-                sub=sub,
-                age=self.age,
-                hand=self.hand,
-                sex=self.sex,
-                participant_tsv=participants_tsv,
-                temp_participants=self.temp_participants,
-            )
             self.create_anat(
                 new_toplvl=new_toplvl,
                 dcmdir=dcmdir,
@@ -303,7 +300,7 @@ class RunBids:
                 subnum=self.subnum,
             )
             self.rename_func_file(
-                new_toplvl=new_toplvl, subnum=self.subnum, dcmdir=dcmdir
+                new_toplvl=new_toplvl, dcmdir=dcmdir
             )
             self.check_func_conversion(new_toplvl=new_toplvl)
             self.modify_json(new_toplvl=new_toplvl)

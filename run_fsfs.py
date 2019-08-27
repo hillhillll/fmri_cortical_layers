@@ -18,16 +18,18 @@ class run_all_fsfs:
         for fsf in all_fsfs:
             cur_hdr = fsf.split(os.sep)[-1][:-4]
             cur_hdr = cur_hdr.replace("design_", "")
-            print('Analyzed {0}'.format(cur_hdr))
             sub = cur_hdr.split("_")[0]
             cur_feat = "{0}/{1}/{2}.feat".format(feat_dir, sub, cur_hdr)
             flag = "{0}/stats/smoothness".format(cur_feat)
-            if os.path.isfile(flag) == False:
+            if not os.path.isfile(flag):
+                print('Analyzing {0}'.format(cur_hdr))
                 cmd = bash_get('-lc "feat {0}"'.format(fsf))
                 subprocess.run(cmd)
                 while os.path.isfile(flag) == False:
                     if os.path.isfile(flag) == True:
                         break
+            else:
+                print('Already analyzed {0}'.format(cur_hdr))
 
     def run(self):
         feat_dir, all_fsfs = self.declare_paths(path=self.path)

@@ -75,7 +75,7 @@ class PlotTIs:
             ax.grid(color="grey", linestyle="-", linewidth=0.25, alpha=0.5)
             leg = ax.legend()
             plt.show()
-            return df, ax
+            return mean_df, ax
         else:
             ax = fig.add_subplot(111, projection="3d")
             ax.set_title("{0} normalized mean BOLD response in relevance to TI".format(action))

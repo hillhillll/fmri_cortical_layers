@@ -14,10 +14,20 @@ class CreateROI:
         self.path = "{0}/derivatives/feats".format(path)
         self.coordinates = coordinates
 
+    def regenerate_dict(self):
+        DEFAULT_MOTOR = {"x": 47, "y": 27, "z": 35}
+        DEFAULT_SENSORY = {"x": 45, "y": 25, "z": 36}
+        coordinates = {"motor": DEFAULT_MOTOR, "sensory": DEFAULT_SENSORY}
+        return coordinates
+
     def get_coordinates(self, file_path: str):
+        self.coordinates = self.regenerate_dict()
         if "Motor" in file_path:
-            return self.coordinates["motor"]
-        return self.coordinates["sensory"]
+            output = self.coordinates["motor"]
+            return output
+        else:
+            output = self.coordinates["sensory"]
+            return output
 
     def get_nifti_paths(self):
         return glob.glob(f"{self.path}/*/*.feat/filtered_func_data.nii.gz")
@@ -47,8 +57,10 @@ class CreateROI:
                 if os.path.isfile("{0}.nii.gz".format(out_point)):
                     os.remove("{0}.nii.gz".format(out_point))
                 coords = self.get_coordinates(file_path)
-                if "IREPI" in file_path:
-                    coords["z"] = str(float(coords["z"]) - 21)
+
+                if "IREPITI" in file_path:
+                    coords["z"] = str(int(float(coords["z"]) - 21))
+                print(coords)
                 cmd = bash_get(
                     '-lc "fslmaths {0} -mul 0 -add 1 -roi {1} 1 {2} 1 {3} 1 0 1 {4} -odt float"'.format(
                         file_path, coords["x"], coords["y"], coords["z"], out_point

@@ -49,11 +49,17 @@ class FsfsFirstLevel:
                 outdir = outdir.replace("C:", "/mnt/c")
                 outdir = outdir.replace(os.sep, "/")
                 if "Gre" in prot_title:
-                    TE = "30"
                     DOF = "BBR"
                     stand_DOF = "12"
+                    TE = "30"
                     TR = "1.5"
                     IMG_size = "18311040"
+                elif "SE" in prot_title:
+                    DOF = "BBR"
+                    stand_DOF = "12"
+                    TE = "28"
+                    TR="3"
+                    IMG_size = "9155520"
                 elif "IR" in prot_title:
                     TE = "28"
                     DOF = "7"
