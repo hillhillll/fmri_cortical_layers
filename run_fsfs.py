@@ -5,7 +5,7 @@ from bash_cmd import bash_get
 
 
 class run_all_fsfs:
-    def __init__(self, path: str = r"C:/Users/Owner/Desktop/Cortical_Layers_fMRI"):
+    def __init__(self, path: str = r"C:/Users/Owner/Desktop/fsl_pipeline_trial"):
         self.path = r"{0}/Nifti".format(path)
 
     def declare_paths(self, path: str):

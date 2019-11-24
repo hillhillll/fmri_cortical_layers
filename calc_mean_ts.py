@@ -46,13 +46,13 @@ class CalcMeanTS:
                     s34 = s34[0:42]
                     s34 = s34.reset_index(drop=True)
                     s = pd.concat([s12, s34], axis=1)
-                    s_rest = ts.iloc[:, 4:][2:43]
+                    s_rest = ts.iloc[:, 2:][2:43]
                     s_rest = s_rest.reset_index(drop=True)
                     s = pd.concat([s, s_rest], axis=1)
                 else:
                     s = ts[2:43].reset_index(drop=True)
             elif "SE" in f:
-                s = ts[1:46].reset_index(drop=True)
+                s = ts[3:44].reset_index(drop=True)
             headers = list(s.columns.values)
             x = s.values
             min_max_scaler = preprocessing.MinMaxScaler()

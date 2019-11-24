@@ -12,13 +12,14 @@ import gather_ts
 import fix_flip_run_bet_anatomical
 import run_spm_preproc
 import fsl_standarize
+import export_excels
 
 
 CRF_FILE = os.path.abspath("C:/Users/Owner/Desktop/CRF.xlsx")
-PATH = os.path.abspath("C:/Users/Owner/Desktop/Cortical_Layers_fMRI")
+PATH = os.path.abspath("C:/Users/Owner/Desktop/fsl_pipeline_trial")
 DEFAULT_MOTOR = {"x": 44, "y": 27, "z": 35}
-DEFAULY_SENSORY = {"x": 45, "y": 25, "z": 36}
-COORDINATES = {"motor": DEFAULT_MOTOR, "sensory": DEFAULY_SENSORY}
+DEFAULt_SENSORY = {"x": 45, "y": 25, "z": 36}
+COORDINATES = {"motor": DEFAULT_MOTOR, "sensory": DEFAULt_SENSORY}
 
 
 class FslPipeline:
@@ -172,6 +173,12 @@ class FslPipeline:
         to_standard = fsl_standarize.Prep_Fsl(path=self.path)
         to_standard.run()
 
+    def export_summary(self, path: str = None):
+        if not path:
+            path = self.path
+            export_job = export_excels.CreateExcels(path=path)
+            export_job.export_info()
+
     def run(self):
         """
         Running all FSL-based pipeline for analyzing Cortical-Layers fMRI data
@@ -188,3 +195,12 @@ class FslPipeline:
         self.featquery()
         self.ts_gather()
         self.calc_ts_features()
+        self.export_summary()
+
+    def run_with_spm(self):
+        """
+        Running all FSL-based pipeline for analyzing Cortical-Layers fMRI data
+        """
+
+        self.to_bids()
+        self.prep_bold_spm()

@@ -1,0 +1,26 @@
+fMRI cortical layer analysis pipeline:
+1. Convert DICOM files into nifties using SPM GUI.
+3. Gray matter analysis:
+	1. 
+		[IRdata, TIlist, minIRnii, AllIRnii, MPRAGEnii, series_index] = makeIRdata(folder,varargin)
+	2. 
+		[T1map,M0map,normM0map] = calcT1map(IRdata,TIlist);
+	3.
+		T1Histogram = genT1Histogram(T1map,normM0map);
+	4.
+		GM = fitgmdist(T1Histogram,K);
+		GM.mu
+	5. 
+		Pmap = calcPmapGM(T1map,normM0map,GM)
+		size(Pmap) -> [size(IRdata,1) size(IRdata,2) size(IRdata,3) K]
+		TI = T1*ln2
+ 
+2. Analyse fMRI data using spm_cortical_fMRI script:
+Don’t forget to change (1) TR, (2) active, (3) img_dir, (4) subj 
+
+3. Create roi.mat file using mars bar.
+4. Create time course for each scan:
+		y = get_time_course(spm_file,roi_file) for each scan.
+5. Create struct of time courses
+		[ROI_struct,Mean_BOLD]=Create_ROI_struct(Gre_ROI,ROI_1,ROI_2,ROI_3,ROI_4)
+6. Plot the ROI_struct using Plot_ROIs(Motor_ROIs,Sensory_ROIs)

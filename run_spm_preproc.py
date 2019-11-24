@@ -23,19 +23,26 @@ class SpmPrep:
         protocols = glob.glob(r"{0}/func/*.json".format(sub_path))
         protocols_to_return = list()
         for prot in protocols:
-            protocols_to_return.append(prot.split("_")[-2].split("-")[-1])
+            new_prot = prot.split("_")[-2].split("-")[-1]
+            if new_prot == 'EPI':
+                new_prot = 'SE-EPI'
+            protocols_to_return.append(new_prot)
         protocols_to_return = set(protocols_to_return)
         return protocols_to_return
 
     def spm_prep(self, subj: str, prot: str, path: str = None):
         acqs = ["Motor", "Sensory"]
         for acq in acqs:
-            os.system(
-                r"matlab -noFigureWindows -nosplash -nodesktop -wait -r "
-                r"spm_cortical_fMRI('{0}','{1}','{2}','{3}');exit".format(
-                    acq, prot, subj, path
-                )
+            flag = r"{0}/derivatives/nii_SPM/{1}/{2}_{3}_stats".format(
+                os.path.dirname(self.path), subj, acq, prot
             )
+            if not os.path.isdir(flag):
+                os.system(
+                    r"matlab -noFigureWindows -nosplash -nodesktop -wait -r "
+                    r"spm_cortical_fMRI('{0}','{1}','{2}','{3}');exit".format(
+                        acq, prot, subj, path
+                    )
+                )
 
     def move_new_files(self, subj: str, path: str = None):
         if not path:
@@ -52,5 +59,5 @@ class SpmPrep:
         for subj in subjects:
             protocols = self.get_subj_protocols(subj=subj, path=self.path)
             for prot in protocols:
-                self.spm_prep(subj=subj, prot=prot, path=self.path)
+                self.spm_prep(subj=subj, prot=prot, path=os.path.dirname(self.path))
             self.move_new_files(subj=subj, path=self.path)

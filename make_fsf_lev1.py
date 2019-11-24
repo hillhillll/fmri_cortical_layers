@@ -13,7 +13,7 @@ bash = os.path.join(system32, "bash.exe")
 
 
 class FsfsFirstLevel:
-    def __init__(self, path: str = r"C:/Users/Owner/Desktop/Cortical_Layers_fMRI"):
+    def __init__(self, path: str = r"C:/Users/Owner/Desktop/fsl_pipeline_trial"):
         self.path = r"{0}/Nifti".format(path)
         self.output_path = r"{0}/derivatives/feats".format(path)
         # Set this to the directory all of the sub### directories live in
@@ -87,7 +87,7 @@ class FsfsFirstLevel:
                     splitdir_sub,
                     "func",
                     "motion_assess",
-                    "{0}_motion_assess".format(prot_title[:-4]),
+                    "{0}_motion_assess".format(prot_title[7:-4]),
                 )
                 con_file = os.path.join(con_file, "confound.txt")
                 con_file = con_file.replace("C:", "/mnt/c")

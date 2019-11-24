@@ -7,7 +7,7 @@ from bash_cmd import bash_get
 
 
 class Featquery:
-    def __init__(self, path: str = r"C:/Users/Owner/Desktop/Cortical_Layers_fMRI"):
+    def __init__(self, path: str = r"C:/Users/Owner/Desktop/fsl_pipeline_trial"):
         self.path = r"{0}/derivatives/feats".format(path)
         self.subjects = glob.glob("{0}/*".format(self.path))
 

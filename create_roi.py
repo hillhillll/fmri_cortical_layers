@@ -3,14 +3,16 @@ import glob
 import subprocess
 from bash_cmd import bash_get
 
-PATH = os.path.abspath("C:/Users/Owner/Desktop/Cortical_Layers_fMRI")
+PATH = os.path.abspath("C:/Users/Owner/Desktop/fsl_pipeline_trial")
 DEFAULT_MOTOR = {"x": 47, "y": 27, "z": 35}
 DEFAULT_SENSORY = {"x": 45, "y": 25, "z": 36}
 COORDINATES = {"motor": DEFAULT_MOTOR, "sensory": DEFAULT_SENSORY}
+TRUE_ROI = True
 
 
 class CreateROI:
-    def __init__(self, coordinates: dict = COORDINATES, path: str = PATH):
+    def __init__(self, coordinates: dict = COORDINATES, path: str = PATH, true_roi: bool = TRUE_ROI):
+        self.true_roi = true_roi
         self.path = "{0}/derivatives/feats".format(path)
         self.coordinates = coordinates
 
@@ -20,8 +22,17 @@ class CreateROI:
         coordinates = {"motor": DEFAULT_MOTOR, "sensory": DEFAULT_SENSORY}
         return coordinates
 
+    def generate_false_roi(self):
+        DEFAULT_MOTOR = {"x": 34, "y": 33, "z": 21}
+        DEFAULT_SENSORY = {"x": 34, "y": 33, "z": 21}
+        coordinates = {"motor": DEFAULT_MOTOR, "sensory": DEFAULT_SENSORY}
+        return coordinates
+
     def get_coordinates(self, file_path: str):
-        self.coordinates = self.regenerate_dict()
+        if self.true_roi:
+            self.coordinates = self.regenerate_dict()
+        else:
+            self.coordinates = self.generate_false_roi()
         if "Motor" in file_path:
             output = self.coordinates["motor"]
             return output
@@ -53,7 +64,7 @@ class CreateROI:
                         os.path.dirname(file_path).split(os.sep)[-1][:-5]
                     )
                 )
-                sphere_size = "8"
+                sphere_size = "6"
                 if os.path.isfile("{0}.nii.gz".format(out_point)):
                     os.remove("{0}.nii.gz".format(out_point))
                 coords = self.get_coordinates(file_path)

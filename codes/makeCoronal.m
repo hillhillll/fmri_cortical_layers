@@ -1,0 +1,10 @@
+function Coronal = makeCoronal(originalMRI)
+thisSlice = size(originalMRI,1)/2;
+a = size(originalMRI,2);
+b = size(originalMRI,3);
+c = size(originalMRI,4);
+M1 = originalMRI(thisSlice,:,:,:);
+M2 = reshape(M1,[a b c]);
+T0 = maketform('affine',[0 -2.5; 1 0; 0 0]);
+R2 = makeresampler({'cubic','nearest'},'fill');
+Coronal = imtransform(M2,T0,R2);
