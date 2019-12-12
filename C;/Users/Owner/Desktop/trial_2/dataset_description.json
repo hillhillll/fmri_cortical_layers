@@ -1,0 +1,19 @@
+{
+    "Name": "Cortical_Layers_fMRI",
+    "BIDSVersion": "1.0.2",
+    "License": "",
+    "Authors": ["Gal Hershkovitz"],
+    "Acknowledgements": "",
+    "HowToAcknowledge": "",
+    "Funding": [
+        "",
+        "",
+        ""
+    ],
+    "ReferencesAndLinks": [
+        "",
+        "",
+        ""
+    ],
+    "DatasetDOI": ""
+}

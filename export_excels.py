@@ -5,7 +5,7 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 
 ACTIONS = ["Motor", "Sensory"]
-ACQS = ["Gre", "SE", "IREPITI"]
+ACQS = ["SE", "IREPITI"]
 
 
 class CreateExcels:

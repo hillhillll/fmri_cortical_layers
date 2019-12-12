@@ -1,22 +1,22 @@
 import os
-import subject_bids
 import pandas as pd
-import prep_bold
 import make_fsf_lev1
-import run_fsfs
-import QA_all_lev1s
 import create_roi
-import calc_mean_ts
+import subject_bids
+import fsl_standarize
+import prep_bold
+import fix_flip_run_bet_anatomical
 import run_featquery
 import gather_ts
-import fix_flip_run_bet_anatomical
-import run_spm_preproc
-import fsl_standarize
+import calc_ts_features
+import run_fsfs
+import QA_all_lev1s
 import export_excels
-
+import plot_nullify
+import plot_IR_3D
 
 CRF_FILE = os.path.abspath("C:/Users/Owner/Desktop/CRF.xlsx")
-PATH = os.path.abspath("C:/Users/Owner/Desktop/fsl_pipeline_trial")
+PATH = os.path.abspath("C:/Users/Owner/Desktop/Cortical_layers_fMRI")
 DEFAULT_MOTOR = {"x": 44, "y": 27, "z": 35}
 DEFAULt_SENSORY = {"x": 45, "y": 25, "z": 36}
 COORDINATES = {"motor": DEFAULT_MOTOR, "sensory": DEFAULt_SENSORY}
@@ -74,16 +74,6 @@ class FslPipeline:
         bold_create = prep_bold.RunPrepBold(path=self.path)
         bold_create.run()
 
-    def prep_bold_spm(self):
-        """                                     ***unused***
-        MATLAB-based preproccessing pipeline based on spm batch script
-        :param path: a string containing the path to the mother directory of all files
-        :return: swr (smoothed, warped, realigned) nifti files for each scan + preproccessing derviatives
-        """
-
-        bold_prep = run_spm_preproc.SpmPrep(path=self.path)
-        bold_prep.run()
-
     def make_fsfs_files(self):
         """
         FEAT design files creation, based on functional nifti scans
@@ -119,8 +109,13 @@ class FslPipeline:
         Create ROI for each FEAT directory, for further analysis
         :return: binary ROI spheres for motor and sensory paradigm, centered in voxel-based coordinates
         """
-
-        ROI = create_roi.CreateROI(path=self.path, coordinates=self.coordinates)
+        if "Model_check" in self.path:
+            true_roi = False
+        else:
+            true_roi = True
+        ROI = create_roi.CreateROI(
+            path=self.path, true_roi=true_roi, coordinates=self.coordinates
+        )
         ROI.run()
 
     def featquery(self):
@@ -160,7 +155,7 @@ class FslPipeline:
         :return: files mentioned above
         """
 
-        features_calc = calc_mean_ts.CalcMeanTS(path=self.path)
+        features_calc = calc_ts_features.CalcMeanTS(path=path)
         features_calc.run()
 
     def native2standard(self, path: str = None):
@@ -176,8 +171,20 @@ class FslPipeline:
     def export_summary(self, path: str = None):
         if not path:
             path = self.path
-            export_job = export_excels.CreateExcels(path=path)
-            export_job.export_info()
+        export_job = export_excels.CreateExcels(path=path)
+        export_job.export_info()
+
+    def plot_3D(self, path: str = None):
+        if not path:
+            path = self.path
+        plot3 = plot_IR_3D.PlotIR(path=path)
+        plot3.run()
+
+    def plot_null(self, path: str = None):
+        if not path:
+            path = self.path
+        plot_null = plot_nullify.PlotTIs(path=path)
+        plot_null.run()
 
     def run(self):
         """
@@ -190,17 +197,10 @@ class FslPipeline:
         self.make_fsfs_files()
         self.run_fsfs()
         self.qa_lev1()
-        self.native2standard()
         self.create_roi()
         self.featquery()
         self.ts_gather()
-        self.calc_ts_features()
+        self.calc_ts_features(path=self.path)
         self.export_summary()
-
-    def run_with_spm(self):
-        """
-        Running all FSL-based pipeline for analyzing Cortical-Layers fMRI data
-        """
-
-        self.to_bids()
-        self.prep_bold_spm()
+        self.plot_3D()
+        self.plot_null()

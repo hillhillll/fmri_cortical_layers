@@ -87,7 +87,7 @@ class FsfsFirstLevel:
                     splitdir_sub,
                     "func",
                     "motion_assess",
-                    "{0}_motion_assess".format(prot_title[7:-4]),
+                    "{0}".format(prot_title[7:-4]),
                 )
                 con_file = os.path.join(con_file, "confound.txt")
                 con_file = con_file.replace("C:", "/mnt/c")

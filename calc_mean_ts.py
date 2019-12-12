@@ -26,7 +26,7 @@ class CalcMeanTS:
             mean_b_f = f.replace("all_ts", "mean_norm_bold_response")
             mean_real_b = f.replace("all_ts", "mean_bold_response")
             if "Gre" in f:
-                s12 = pd.concat([ts["sub-01"], ts["sub-04"]], axis=1)
+                s12 = ts["sub-04"]
                 s12 = s12[7:90]
                 s12 = s12.reset_index(drop=True)
                 s34 = pd.concat([ts["sub-02"], ts["sub-03"]], axis=1)
@@ -34,11 +34,8 @@ class CalcMeanTS:
                 s34 = s34.reset_index(drop=True)
                 s = pd.concat([s12, s34], axis=1)
             elif "IREPITI" in f and "SE" not in f:
-                if "sub-01" in ts.keys() or "sub-04" in ts.keys():
-                    if "sub-01" in ts.keys() and "sub-04" in ts.keys():
-                        s12 = pd.concat([ts["sub-01"], ts["sub-04"]], axis=1)
-                        s34 = pd.concat([ts["sub-02"], ts["sub-03"]], axis=1)
-                    elif "sub-01" not in ts.keys() and "sub-04" in ts.keys():
+                if "sub-04" in ts.keys():
+                    if "sub-01" not in ts.keys():
                         s12 = ts["sub-04"]
                         s34 = ts["sub-03"]
                     s12 = s12[3:45]

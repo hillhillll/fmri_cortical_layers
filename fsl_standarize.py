@@ -2,18 +2,17 @@ import glob
 import subprocess
 import bash_cmd
 import os
-
+from nipype.interfaces import fsl
 
 class Prep_Fsl:
-    def __init__(self, path: str = r"C:/Users/Owner/Desktop/Cortical_Layers_fMRI"):
+    def __init__(self, path: str = r"C:/Users/Owner/Desktop/fsl_pipeline_trial"):
         self.path = r"{0}/derivatives/feats".format(path)
 
-    def prep_filtered_func(self, path: str = None):
+    def FLIRT(self, path: str = None):
         if not path:
             path = self.path
         func_data = glob.glob(r"{0}/*/*.feat".format(path))
         for func in func_data:
-            filtered_func = r"{0}/filtered_func_data.nii.gz".format(func)
             tstat = r"{0}/stats/tstat1.nii.gz".format(func)
             output_filtered_func = r"{0}/filtered_func_data_standard.nii.gz".format(
                 func
@@ -23,7 +22,7 @@ class Prep_Fsl:
                 print("Already standarized {0}".format(func.split(os.sep)[-1]))
             else:
                 print("Standarizing {0}".format(func.split(os.sep)[-1]))
-                standard2example = r"{0}/reg/standard2example_func.mat".format(func)
+                standard2example = r"{0}/reg/example_func2standard.mat".format(func)
                 cmd = bash_cmd.bash_get(
                     '-lc "flirt -in /usr/local/fsl/data/standard/MNI152_T1_2mm_brain -ref {0} -applyxfm -init {1} -out {2}"'.format(
                         filtered_func, standard2example, output_filtered_func

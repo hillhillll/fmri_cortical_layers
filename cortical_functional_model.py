@@ -6,7 +6,6 @@ import pandas as pd
 import glob
 import lsqnonlin_model
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 PATH = os.path.abspath("C:/Users/Owner/Desktop/fsl_pipeline_trial")
 PREV_DATA = scipy.io.loadmat(
@@ -68,9 +67,9 @@ class ModelResults:
         xtol : Tolerance for termination by the change of the independent variables.
         method : Algorithm to perform minimization. (‘lm’ : Levenberg-Marquardt algorithm.)
         """
-        max_nfev = 2000
-        ftol = 1e-6
-        xtol = 1e-6
+        max_nfev = 100000
+        ftol = 1e-12
+        xtol = 1e-12
         method = "lm"
         return max_nfev, ftol, xtol, method
 
@@ -83,7 +82,6 @@ class ModelResults:
         """
         FieldNames = [
             "SE-EPI",
-            "Gre",
             "IREPITI630",
             "IREPITI650",
             "IREPITI670",

@@ -12,3 +12,9 @@ def bash_get(cmd):
     cmd = cmd.replace(os.sep, "/")
     cmd = r'{0} {1}'.format(bash,cmd)
     return cmd
+
+def Get_nipype_cmd(cmd: str):
+    cmd = 'bash -lc "'+cmd+'"'
+    cmd = cmd.replace("C:", "/mnt/c")
+    cmd = cmd.replace(os.sep, "/")
+    return cmd

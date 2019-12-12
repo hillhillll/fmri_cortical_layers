@@ -37,7 +37,9 @@ class Featquery:
                     print("Analyzing {0} using featquery".format(subnum))
                     cmd = bash_get(
                         '-lc "featquery 1 {0} 1 stats/cope1 {1} -p -s -b {2}"'.format(
-                            feat, prot, mask
+                            feat.replace(feat[0:2], "/mnt/" + feat[0].lower()),
+                            prot.replace(feat[0:2], "/mnt/" + feat[0].lower()),
+                            mask.replace(feat[0:2], "/mnt/" + feat[0].lower()),
                         )
                     )
                     subprocess.run(cmd)

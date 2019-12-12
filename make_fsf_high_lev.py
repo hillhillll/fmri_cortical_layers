@@ -7,7 +7,7 @@ import platform
 import bash_cmd
 
 
-class FsfsFirstLevel:
+class FsfsHighLevel:
     def __init__(self, path: str = r"C:/Users/Owner/Desktop/fsl_pipeline_trial"):
         self.path = r"{0}/derivatives/feats/".format(path)
         self.output_path = r"{0}/high_lev".format(path)
@@ -48,21 +48,17 @@ class FsfsFirstLevel:
 
     def create_fsfs(self, prots: list, path: str, output_path: str, fsfdir: str):
         for prot in prots:
-            out_dir = r'{0}/{1}.gfeat'.format(output_path,prot.replace('.feat',''))
-            if not os.path.isdir("{0}/{1}".format(output_path, splitdir_sub)):
-                os.makedirs(r"{0}/{1}".format(output_path, splitdir_sub))
-            prot_title = splitdir[-1]
+            out_dir = r'{0}/{1}'.format(output_path,prot.replace('.feat','.gfeat'))
+            if not os.path.isdir(out_dir):
+                os.makedirs(outdir)
             if os.path.isfile(
-                "{0}/lev1/design_{1}.fsf".format(fsfdir, prot_title[:-4])
+                "{0}/design_{1}.fsf".format(fsfdir,prot[:-5])
             ):
                 print("{0} fsf file already exists".format(prot_title[:-4]))
             else:
-                outdir = r"{0}/{1}/{2}".format(
-                    output_path, splitdir_sub, prot_title[:-4]
-                )
                 outdir = outdir.replace("C:", "/mnt/c")
                 outdir = outdir.replace(os.sep, "/")
-                if "Gre" in prot_title:
+                if "Gre" in prot:
                     DOF = "BBR"
                     stand_DOF = "12"
                     TE = "30"
