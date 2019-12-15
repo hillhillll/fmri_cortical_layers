@@ -57,7 +57,9 @@ class Normalize:
         return btr.inputs.out_file
 
     def get_IR_brains(self, subj, action):
-        brains = glob.glob(r"{0}/*{1}*.feat//reg/example_func2highres.nii.gz".format(subj, action))
+        brains = glob.glob(
+            r"{0}/*{1}*.feat//reg/example_func2highres.nii.gz".format(subj, action)
+        )
         return brains
 
     def get_SE_brains(self, subj, action):
@@ -82,23 +84,26 @@ class Normalize:
         cmd = bash_cmd.Get_nipype_cmd(cmd)
         os.system(cmd)
 
-    def FLT_lowres2MPRAGE(self, low_res, MPRAGE):
+    def FLT_lowres_brain2MPRAGE(self, low_res, MPRAGE):
         """
         FLIRT linear registration from lowres brain scan to MPRAGE
         :param low_res: path-like obj or string leading to low-res functional image
         :param MPRAGE: path-like pbj or string leading to high-res structural image
         :return: BET_example_func2highres.mat affine file
         """
-        applyxfm = fsl.ApplyXFM()
-        applyxfm.inputs.in_file = low_res
-        applyxfm.inputs.reference = MPRAGE
-        applyxfm.inputs.in_matrix_file = r"{0}/reg/example_func2highres.mat".format(
+        flt = fsl.FLIRT()
+        flt.inputs.in_file = low_res
+        flt.inputs.reference = MPRAGE
+        # applyxfm.inputs.in_matrix_file = r"{0}/reg/example_func2highres.mat".format(
+        #     os.path.dirname(low_res)
+        # )
+        flt.inputs.out_file = r"{0}/reg/example_func_brain2highres.nii.gz".format(
             os.path.dirname(low_res)
         )
-        applyxfm.inputs.out_file = r"{0}/reg/example_func_brain2highres.nii.gz".format(
+        flt.inputs.out_matrix_file = r"{0}/reg/example_func_brain2highres.mat".format(
             os.path.dirname(low_res)
         )
-        cmd = "{0}".format(applyxfm.cmdline)
+        cmd = "{0}".format(flt.cmdline)
         cmd = bash_cmd.Get_nipype_cmd(cmd)
         os.system(cmd)
         # print("Extracting .mat affine file from low-res to high-res...")
@@ -115,7 +120,7 @@ class Normalize:
         # cmd = "{0} {1}".format(flt.cmdline, options)
         # cmd = bash_cmd.Get_nipype_cmd(cmd)
         # os.system(cmd)
-        return applyxfm.inputs.out_file
+        return flt.inputs.out_file
 
     def FLT_tstat2MPRAGE(self, tstat, MPRAGE):
 
@@ -254,7 +259,9 @@ class Normalize:
                 protocols = self.get_IR_brains(subj=subj, action=action)
                 for prot in protocols:
                     print(prot)
-                    tstat = r'{0}/stats/tstat1.nii.gz'.format(os.path.dirname(os.path.dirname(prot)))
+                    tstat = r"{0}/stats/tstat1.nii.gz".format(
+                        os.path.dirname(os.path.dirname(prot))
+                    )
                     # func2highres = self.FLT_lowres2MPRAGE(
                     #     low_res=prot, MPRAGE=MPRAGE
                     # )
@@ -285,7 +292,6 @@ class Normalize:
                         "Finished non-linear registrationg of t-scores map to MNI remplate."
                     )
                     print(Style.RESET_ALL)
-
 
                     # print("BET done.")
                     # print(Style.RESET_ALL)

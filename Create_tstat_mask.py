@@ -5,12 +5,12 @@ import glob
 
 #%%
 PATH = os.path.abspath(r"C:\Users\Owner\Desktop\Cortical_layers_fMRI")
-CUT_OFF = 2.5
+CUT_OFF = 2.8
 
 
 class Create_mask:
     def __init__(self, path: str = PATH, cut_off: float = CUT_OFF):
-        self.high_lev_dir = r"{0}\derivatives\feats\High-lev".format(path)
+        self.high_lev_dir = r"{0}\derivatives\feats\High_lev".format(path)
         self.cut_off = cut_off
 
     def get_high_lev_feats(self, high_lev_dir: str):

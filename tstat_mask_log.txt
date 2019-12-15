@@ -1,11 +1,11 @@
 # 	name of reference image
---ref=/mnt/c/Users/Owner/Desktop/Cortical_layers_fMRI/derivatives/feats/sub-19/sub-19_task-Motor_acq-SE-EPI_bold.feat/reg/highres.nii.gz
+--ref=/mnt/c/Users/Owner/Desktop/Cortical_layers_fMRI/derivatives/feats/sub-01/sub-01_task-Motor_acq-SE-EPI_bold.feat/reg/highres.nii.gz
 # 	name of input image
 --in=/mnt/c/Users/Owner/Desktop/Cortical_layers_fMRI/derivatives/feats/high_lev/Motor_SE.gfeat/tstat_mask.nii.gz
 # 	name of file containing affine transform
---aff=/mnt/c/Users/Owner/Desktop/Cortical_layers_fMRI/derivatives/feats/sub-19/Motor_mask2highres_linear.mat
+--aff=/mnt/c/Users/Owner/Desktop/Cortical_layers_fMRI/derivatives/feats/sub-01/Motor_mask2highres_linear.mat
 # 	name of output image
---iout=/mnt/c/Users/Owner/Desktop/Cortical_layers_fMRI/derivatives/feats/sub-19/Motor_mask2subj_highres.nii.gz
+--iout=/mnt/c/Users/Owner/Desktop/Cortical_layers_fMRI/derivatives/feats/sub-01/Motor_mask2subj_highres.nii.gz
 # Name of log-file
 --logout=/mnt/c/Users/Owner/Desktop/FSL_pipeline/tstat_mask_log.txt
 # If =1, use implicit masking based on value in --ref image. Default =1
